@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connections 💛</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #f9df6d;
+    --yellow-dark: #e8c840;
+    --green: #a0c35a;
+    --green-dark: #7ea833;
+    --blue: #b0c4ef;
+    --blue-dark: #8aa5d6;
+    --purple: #ba81c5;
+    --purple-dark: #9b60a8;
+    --bg: #faf7f2;
+    --card-bg: #efebe4;
+    --text: #1a1a1a;
+    --text-light: #5a5a5a;
+    --selected: #1a1a1a;
+    --selected-text: #fff;
+    --error-shake: shake 0.4s ease-in-out;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 640px;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+
+  .solved-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .solved-group {
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    animation: solvedIn 0.5s cubic-bezier(.34,1.56,.64,1) forwards;
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  @keyframes solvedIn { to { opacity: 1; transform: scale(1); } }
+
+  .solved-group .group-name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+  .solved-group .group-words { font-size: 0.95rem; font-weight: 500; }
+
+  .solved-group.yellow { background: var(--yellow); }
+  .solved-group.green  { background: var(--green); }
+  .solved-group.blue   { background: var(--blue); }
+  .solved-group.purple { background: var(--purple); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .tile {
+    aspect-ratio: 2.2 / 1;
+    border-radius: 10px;
+    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: clamp(0.62rem, 2.4vw, 0.85rem);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s, color 0.15s, transform 0.15s;
+    text-align: center;
+    padding: 4px 5px;
+    line-height: 1.2;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tile:hover { transform: scale(1.04); }
+  .tile.selected {
+    background: var(--selected);
+    color: var(--selected-text);
+    transform: scale(1.04);
+  }
+  .tile.wrong { animation: var(--error-shake); }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  button {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 12px 28px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 2px solid var(--text);
+    background: transparent;
+    color: var(--text);
+  }
+  button:hover { background: var(--text); color: #fff; }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  button:disabled:hover { background: transparent; color: var(--text); }
+  button.primary { background: var(--text); color: #fff; }
+  button.primary:hover { background: #333; }
+  button.primary:disabled:hover { background: var(--text); color: #fff; }
+
+  .mistakes {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 20px;
+  }
+  .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--text);
+    transition: opacity 0.3s;
+  }
+  .dot.used { opacity: 0.15; }
+
+  /* Valentine Overlay */
+  .valentine-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    pointer-events: none;
+    transition: background 0.6s;
+  }
+  .valentine-overlay.active {
+    background: rgba(0,0,0,0.55);
+    pointer-events: all;
+  }
+
+  .valentine-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 36px 28px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.8) translateY(30px);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .valentine-overlay.active .valentine-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+
+  .valentine-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: var(--yellow);
+    opacity: 0.25;
+    z-index: 0;
+  }
+  .valentine-card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: var(--purple);
+    opacity: 0.2;
+    z-index: 0;
+  }
+
+  .valentine-card .yay-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+    animation: yayBounce 0.6s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes yayBounce {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .valentine-card .lebron-gif {
+    width: 220px;
+    max-width: 80%;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+    animation: gifIn 0.5s 0.2s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes gifIn {
+    0% { transform: scale(0) rotate(-8deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .valentine-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.65rem;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.5s 0.4s ease both;
+  }
+  .valentine-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.5s 0.5s ease both;
+  }
+  .valentine-card .sign-off {
+    margin-top: 16px;
+    font-weight: 600;
+    font-size: 1.08rem;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.5s 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #fff;
+    padding: 10px 28px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    z-index: 300;
+    animation: toastIn 0.3s ease, toastOut 0.3s 1.5s ease forwards;
+    white-space: nowrap;
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+  @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+
+  #confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  @media (max-width: 400px) {
+    .tile { font-size: 0.58rem; aspect-ratio: 2/1; }
+    .container { padding: 16px 10px; }
+    button { padding: 10px 20px; font-size: 0.85rem; }
+    .valentine-card .yay-text { font-size: 2.2rem; }
+    .valentine-card .lebron-gif { width: 170px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Connections</h1>
+  <p class="subtitle">Create four groups of four!</p>
+
+  <div class="solved-area" id="solvedArea"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="controls">
+    <button id="shuffleBtn" onclick="shuffle()">Shuffle</button>
+    <button id="deselectBtn" onclick="deselectAll()">Deselect</button>
+    <button id="submitBtn" class="primary" onclick="submit()" disabled>Submit</button>
+  </div>
+
+  <div class="mistakes">
+    <span>Mistakes remaining:</span>
+    <span class="dot" id="d1"></span>
+    <span class="dot" id="d2"></span>
+    <span class="dot" id="d3"></span>
+    <span class="dot" id="d4"></span>
+  </div>
+</div>
+
+<div class="valentine-overlay" id="overlay">
+  <div class="valentine-card">
+    <div class="yay-text">YAYYY!! 🎉</div>
+    <img class="lebron-gif" src="https://media.giphy.com/media/GgSXZ91pwkW8P1s8Uz/giphy.gif" alt="LeBron celebration">
+    <h2 id="valTitle">Will You Be My Valentine? ❤️</h2>
+    <p id="valMsg">You just solved every puzzle — but you already know the biggest one was how you stole my heart. 💛</p>
+    <p class="sign-off" id="valSign">— With love, Feng</p>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+// =============================================================
+//  🎯  GAME CONFIGURATION
+// =============================================================
+
+const GROUPS = [
+  {
+    name: "Our First Dates",
+    color: "yellow",
+    words: ["NE ZHA 2", "POPMART GIFT", "TACO BELL", "SUMMER PROGRAM"],
+    mustBeLast: false
+  },
+  {
+    name: "Our Favorite Food Places",
+    color: "green",
+    words: ["MALATANG", "HEYTEA", "MOLLY TEA", "YOGURTLAND"],
+    mustBeLast: false
+  },
+  {
+    name: "Things I Love About You",
+    color: "blue",
+    words: ["SCENT", "SMILE", "EYES", "EVERYTHING"],
+    mustBeLast: false
+  },
+  {
+    name: "Be My Valentine ❤️",
+    color: "purple",
+    words: ["WILL", "YOU", "BE", "MINE"],
+    mustBeLast: true
+  }
+];
+
+const VAL_TITLE = "Will You Be My Valentine? ❤️";
+const VAL_MSG = "You just solved every puzzle — but you already know the biggest one was how you stole my heart. 💛";
+const VAL_SIGN = "— With love, Feng";
+
+// =============================================================
+
+document.getElementById('valTitle').textContent = VAL_TITLE;
+document.getElementById('valMsg').textContent = VAL_MSG;
+document.getElementById('valSign').textContent = VAL_SIGN;
+
+let tiles = [];
+let selected = [];
+let solvedGroups = [];
+let mistakesLeft = 4;
+let guessedSets = [];
+
+function init() {
+  const allWords = [];
+  GROUPS.forEach(g => g.words.forEach(w => allWords.push({ word: w, group: g })));
+  tiles = allWords;
+  shuffleArray(tiles);
+  render();
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function render() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  tiles.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'tile' + (selected.includes(i) ? ' selected' : '');
+    div.textContent = t.word;
+    div.onclick = () => toggleSelect(i);
+    grid.appendChild(div);
+  });
+  document.getElementById('submitBtn').disabled = selected.length !== 4;
+}
+
+function toggleSelect(i) {
+  if (selected.includes(i)) {
+    selected = selected.filter(x => x !== i);
+  } else if (selected.length < 4) {
+    selected.push(i);
+  }
+  render();
+}
+
+function deselectAll() { selected = []; render(); }
+
+function shuffle() { selected = []; shuffleArray(tiles); render(); }
+
+function showToast(msg) {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+function submit() {
+  if (selected.length !== 4) return;
+
+  const words = selected.map(i => tiles[i].word).sort();
+  const key = words.join(',');
+  if (guessedSets.includes(key)) return;
+
+  const group = tiles[selected[0]].group;
+  const allSame = selected.every(i => tiles[i].group === group);
+
+  if (allSame) {
+    // Check "must be last" constraint
+    const unsolvedNonLast = GROUPS.filter(g => !solvedGroups.includes(g) && !g.mustBeLast);
+    if (group.mustBeLast && unsolvedNonLast.length > 0) {
+      showToast("Not yet... 😏");
+      selected = [];
+      render();
+      return; // Don't count as a mistake or a used guess
+    }
+
+    guessedSets.push(key);
+    solvedGroups.push(group);
+
+    const solvedArea = document.getElementById('solvedArea');
+    const div = document.createElement('div');
+    div.className = `solved-group ${group.color}`;
+    div.innerHTML = `<div class="group-name">${group.name}</div><div class="group-words">${group.words.join(', ')}</div>`;
+    solvedArea.appendChild(div);
+
+    const remaining = [];
+    tiles.forEach((t, i) => { if (!selected.includes(i)) remaining.push(t); });
+    tiles = remaining;
+    selected = [];
+    render();
+
+    if (solvedGroups.length === 4) {
+      document.querySelector('.controls').style.display = 'none';
+      document.querySelector('.mistakes').style.display = 'none';
+      setTimeout(showValentine, 800);
+    }
+  } else {
+    guessedSets.push(key);
+
+    const groupCounts = {};
+    selected.forEach(i => {
+      const gn = tiles[i].group.name;
+      groupCounts[gn] = (groupCounts[gn] || 0) + 1;
+    });
+    const maxMatch = Math.max(...Object.values(groupCounts));
+
+    mistakesLeft--;
+    updateMistakes();
+
+    const gridEl = document.getElementById('grid');
+    const tileEls = gridEl.querySelectorAll('.tile');
+    selected.forEach(i => tileEls[i]?.classList.add('wrong'));
+    setTimeout(() => { selected.forEach(i => tileEls[i]?.classList.remove('wrong')); }, 500);
+
+    if (maxMatch === 3) showToast("One away!");
+
+    selected = [];
+    render();
+
+    if (mistakesLeft <= 0) setTimeout(gameOver, 600);
+  }
+}
+
+function updateMistakes() {
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('d' + i);
+    if (i > mistakesLeft) dot.classList.add('used');
+  }
+}
+
+function gameOver() {
+  const unsolved = GROUPS.filter(g => !solvedGroups.includes(g));
+  const solvedArea = document.getElementById('solvedArea');
+  unsolved.forEach(g => {
+    const div = document.createElement('div');
+    div.className = `solved-group ${g.color}`;
+    div.innerHTML = `<div class="group-name">${g.name}</div><div class="group-words">${g.words.join(', ')}</div>`;
+    solvedArea.appendChild(div);
+  });
+  document.getElementById('grid').innerHTML = '';
+  document.querySelector('.controls').style.display = 'none';
+  document.querySelector('.mistakes').style.display = 'none';
+  setTimeout(showValentine, 1200);
+}
+
+function showValentine() {
+  document.getElementById('overlay').classList.add('active');
+  launchConfetti();
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#f9df6d','#a0c35a','#b0c4ef','#ba81c5','#ff6b8a','#ff4d6d','#ff85a1','#ffd700'];
+  const pieces = [];
+
+  for (let i = 0; i < 180; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      w: Math.random() * 10 + 5,
+      h: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vy: Math.random() * 3 + 2,
+      vx: (Math.random() - 0.5) * 2,
+      rot: Math.random() * 360,
+      rv: (Math.random() - 0.5) * 8,
+    });
+  }
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.y += p.vy;
+      p.x += p.vx;
+      p.rot += p.rv;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rot * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 350) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  draw();
+}
+
+window.addEventListener('resize', () => {
+  const canvas = document.getElementById('confetti');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+init();
+</script>
+</body>
+</html>
