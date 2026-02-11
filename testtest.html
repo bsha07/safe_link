@@ -8,13 +8,9 @@
 <style>
   :root {
     --yellow: #f9df6d;
-    --yellow-dark: #e8c840;
     --green: #a0c35a;
-    --green-dark: #7ea833;
     --blue: #b0c4ef;
-    --blue-dark: #8aa5d6;
     --purple: #ba81c5;
-    --purple-dark: #9b60a8;
     --bg: #faf7f2;
     --card-bg: #efebe4;
     --text: #1a1a1a;
@@ -196,7 +192,7 @@
   .valentine-card {
     background: #fff;
     border-radius: 24px;
-    padding: 36px 28px;
+    padding: 40px 32px;
     max-width: 420px;
     width: 90%;
     text-align: center;
@@ -236,7 +232,7 @@
   .valentine-card .yay-text {
     font-family: 'DM Serif Display', serif;
     font-size: 2.8rem;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     position: relative;
     z-index: 1;
     animation: yayBounce 0.6s cubic-bezier(.34,1.56,.64,1) forwards;
@@ -251,7 +247,7 @@
     width: 220px;
     max-width: 80%;
     border-radius: 14px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     position: relative;
     z-index: 1;
     animation: gifIn 0.5s 0.2s cubic-bezier(.34,1.56,.64,1) both;
@@ -264,31 +260,137 @@
   .valentine-card h2 {
     font-family: 'DM Serif Display', serif;
     font-size: 1.65rem;
-    margin-bottom: 10px;
+    margin-bottom: 24px;
     position: relative;
     z-index: 1;
     animation: fadeUp 0.5s 0.4s ease both;
-  }
-  .valentine-card p {
-    color: var(--text-light);
-    line-height: 1.6;
-    font-size: 1rem;
-    position: relative;
-    z-index: 1;
-    animation: fadeUp 0.5s 0.5s ease both;
-  }
-  .valentine-card .sign-off {
-    margin-top: 16px;
-    font-weight: 600;
-    font-size: 1.08rem;
-    position: relative;
-    z-index: 1;
-    animation: fadeUp 0.5s 0.6s ease both;
   }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  .answer-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.5s 0.5s ease both;
+    min-height: 60px;
+    align-items: center;
+  }
+
+  .btn-yes {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 14px 44px;
+    border-radius: 999px;
+    border: none;
+    background: #e74c6f;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(231, 76, 111, 0.35);
+  }
+  .btn-yes:hover { background: #d63d60; transform: scale(1.06); box-shadow: 0 6px 24px rgba(231, 76, 111, 0.45); }
+
+  .btn-no {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px 32px;
+    border-radius: 999px;
+    border: 2px solid #ccc;
+    background: #fff;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+  }
+
+  /* GIF Explosion Overlay */
+  .gif-explosion {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 500;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    padding: 24px 16px;
+  }
+  .gif-explosion.active {
+    display: flex;
+  }
+
+  .gif-explosion .big-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+    animation: yayBounce 0.6s cubic-bezier(.34,1.56,.64,1) forwards;
+    z-index: 2;
+    text-shadow: 0 0 40px rgba(255, 75, 120, 0.6);
+  }
+
+  .gif-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 700px;
+    width: 92%;
+    z-index: 2;
+  }
+
+  .gif-grid img {
+    width: 100%;
+    border-radius: 14px;
+    animation: gifPop 0.4s cubic-bezier(.34,1.56,.64,1) both;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .gif-grid img:nth-child(1) { animation-delay: 0.1s; }
+  .gif-grid img:nth-child(2) { animation-delay: 0.2s; }
+  .gif-grid img:nth-child(3) { animation-delay: 0.3s; }
+  .gif-grid img:nth-child(4) { animation-delay: 0.4s; }
+  .gif-grid img:nth-child(5) { animation-delay: 0.5s; }
+
+  @keyframes gifPop {
+    0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  /* Last row: 2 gifs centered */
+  .gif-grid-bottom {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-width: 470px;
+    width: 70%;
+    margin-top: 10px;
+    z-index: 2;
+  }
+  .gif-grid-bottom img {
+    width: 100%;
+    border-radius: 14px;
+    animation: gifPop 0.4s cubic-bezier(.34,1.56,.64,1) both;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .gif-grid-bottom img:nth-child(1) { animation-delay: 0.6s; }
+  .gif-grid-bottom img:nth-child(2) { animation-delay: 0.7s; }
+
+  .gif-explosion .sign-off {
+    color: rgba(255,255,255,0.8);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-top: 24px;
+    z-index: 2;
+    animation: fadeUp 0.5s 0.9s ease both;
   }
 
   /* Toast */
@@ -314,7 +416,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 200;
+    z-index: 600;
   }
 
   @media (max-width: 400px) {
@@ -323,6 +425,8 @@
     button { padding: 10px 20px; font-size: 0.85rem; }
     .valentine-card .yay-text { font-size: 2.2rem; }
     .valentine-card .lebron-gif { width: 170px; }
+    .gif-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .gif-grid-bottom { grid-template-columns: 1fr; max-width: 200px; width: 55%; }
   }
 </style>
 </head>
@@ -350,14 +454,32 @@
   </div>
 </div>
 
+<!-- Valentine Question Popup -->
 <div class="valentine-overlay" id="overlay">
   <div class="valentine-card">
     <div class="yay-text">YAYYY!! 🎉</div>
-    <img class="lebron-gif" src="https://media.giphy.com/media/GgSXZ91pwkW8P1s8Uz/giphy.gif" alt="LeBron celebration">
-    <h2 id="valTitle">Will You Be My Valentine? ❤️</h2>
-    <p id="valMsg">You just solved every puzzle — but you already know the biggest one was how you stole my heart. 💛</p>
-    <p class="sign-off" id="valSign">— With love, Feng</p>
+    <img class="lebron-gif" src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDg4eHh0eTIzMXMwaGwwNXJhNTJ6anlrdzljb2x0eHVlOXRtNndnNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/D1ZArr6pCqsIlOZjme/giphy.gif" alt="LeBron celebration">
+    <h2>Will You Be My Valentine? ❤️</h2>
+    <div class="answer-buttons">
+      <button class="btn-yes" onclick="sayYes()">Yes 💕</button>
+      <button class="btn-no" id="noBtn" onmouseenter="runAway()" ontouchstart="runAway()">No</button>
+    </div>
   </div>
+</div>
+
+<!-- GIF Explosion Screen (after Yes) -->
+<div class="gif-explosion" id="gifExplosion">
+  <div class="big-text">LET'S GOOO 🎉❤️🔥</div>
+  <div class="gif-grid">
+    <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3E1MWRiNTJvYWJ5emYxcW1xdHZ0ZjIwNmN2OTBzeWZuZGw5ZHh3aCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/INZUj2jZSruso/giphy.gif" alt="GIF 1">
+    <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTFsZmJhdzU2bHVnb25tY2RrcHpkZ3BkbjFiMnp2eXpwajlheTB0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dW7qj1hS9swu1MnXOC/giphy.gif" alt="GIF 2">
+    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcmVkYnFlYTZqdDZrd2Z5cnIyYmJpYTNzMjd1bmo3dmpmZ2g1dnliNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l2YWfJ8WCq1zWgFyw/giphy.gif" alt="GIF 3">
+  </div>
+  <div class="gif-grid-bottom">
+    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExODQ5bGtobG5xODN6emNvZWNidHVwM2tvZTExZ3JpM3B1MXdhdjFreSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1qFwN4Su3tuCit6QUT/giphy.gif" alt="GIF 4">
+    <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDg4eHh0eTIzMXMwaGwwNXJhNTJ6anlrdzljb2x0eHVlOXRtNndnNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/D1ZArr6pCqsIlOZjme/giphy.gif" alt="GIF 5">
+  </div>
+  <div class="sign-off">— With love, Feng 💛</div>
 </div>
 
 <canvas id="confetti"></canvas>
@@ -371,7 +493,7 @@ const GROUPS = [
   {
     name: "Our First Dates",
     color: "yellow",
-    words: ["NE ZHA 2", "POPMART GIFT", "BLOCK BLAST", "SUMMER PROGRAM"],
+    words: ["NE ZHA 2", "POPMART GIFT", "TACO BELL", "SUMMER PROGRAM"],
     mustBeLast: false
   },
   {
@@ -394,15 +516,48 @@ const GROUPS = [
   }
 ];
 
-const VAL_TITLE = "Will You Be My Valentine? ❤️";
-const VAL_MSG = "You just solved every puzzle — but you already know the biggest one was how you stole my heart. 💛";
-const VAL_SIGN = "— With love, Feng";
-
+// =============================================================
+//  RUNAWAY "NO" BUTTON
 // =============================================================
 
-document.getElementById('valTitle').textContent = VAL_TITLE;
-document.getElementById('valMsg').textContent = VAL_MSG;
-document.getElementById('valSign').textContent = VAL_SIGN;
+let noRunCount = 0;
+
+function runAway() {
+  const btn = document.getElementById('noBtn');
+  const card = btn.closest('.valentine-card');
+  const cardRect = card.getBoundingClientRect();
+
+  noRunCount++;
+
+  if (noRunCount >= 4) {
+    btn.style.transition = 'all 0.4s ease';
+    btn.style.transform = 'scale(0)';
+    btn.style.opacity = '0';
+    setTimeout(() => { btn.style.display = 'none'; }, 400);
+    return;
+  }
+
+  const maxX = cardRect.width / 2 - 60;
+  const maxY = 80;
+  const rx = (Math.random() - 0.5) * 2 * maxX;
+  const ry = (Math.random() - 0.5) * 2 * maxY;
+  const scale = 1 - (noRunCount * 0.15);
+  btn.style.transform = `translate(${rx}px, ${ry}px) scale(${scale})`;
+}
+
+// =============================================================
+//  YES → GIF EXPLOSION
+// =============================================================
+
+function sayYes() {
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('gifExplosion').classList.add('active');
+  launchConfetti();
+}
+
+// =============================================================
+//  GAME LOGIC
+// =============================================================
 
 let tiles = [];
 let selected = [];
@@ -471,13 +626,12 @@ function submit() {
   const allSame = selected.every(i => tiles[i].group === group);
 
   if (allSame) {
-    // Check "must be last" constraint
     const unsolvedNonLast = GROUPS.filter(g => !solvedGroups.includes(g) && !g.mustBeLast);
     if (group.mustBeLast && unsolvedNonLast.length > 0) {
       showToast("Not yet... 😏");
       selected = [];
       render();
-      return; // Don't count as a mistake or a used guess
+      return;
     }
 
     guessedSets.push(key);
@@ -551,9 +705,9 @@ function gameOver() {
 
 function showValentine() {
   document.getElementById('overlay').classList.add('active');
-  launchConfetti();
 }
 
+// ---- Confetti ----
 function launchConfetti() {
   const canvas = document.getElementById('confetti');
   const ctx = canvas.getContext('2d');
@@ -563,7 +717,7 @@ function launchConfetti() {
   const colors = ['#f9df6d','#a0c35a','#b0c4ef','#ba81c5','#ff6b8a','#ff4d6d','#ff85a1','#ffd700'];
   const pieces = [];
 
-  for (let i = 0; i < 180; i++) {
+  for (let i = 0; i < 200; i++) {
     pieces.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height - canvas.height,
@@ -592,7 +746,7 @@ function launchConfetti() {
       ctx.restore();
     });
     frame++;
-    if (frame < 350) requestAnimationFrame(draw);
+    if (frame < 400) requestAnimationFrame(draw);
     else ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   draw();
